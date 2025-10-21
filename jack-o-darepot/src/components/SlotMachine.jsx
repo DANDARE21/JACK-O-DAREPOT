@@ -4,7 +4,15 @@ import "./SlotMachine.css";
 
 const SlotMachine = forwardRef(
   (
-    { players, gamesByCategory, curseMeter, increaseCurse, resetCurse, spinCount, setSpinCount },
+    {
+      players,
+      gamesByCategory,
+      curseMeter,
+      increaseCurse,
+      resetCurse,
+      spinCount,
+      setSpinCount,
+    },
     ref
   ) => {
     const [player, setPlayer] = useState("???");
@@ -36,7 +44,12 @@ const SlotMachine = forwardRef(
             ? "6"
             : getRandom(gamesByCategory[finalCategory]);
 
-        console.log("Final selection ->", finalPlayer, finalCategory, finalGame);
+        console.log(
+          "Final selection ->",
+          finalPlayer,
+          finalCategory,
+          finalGame
+        );
 
         setPlayer(finalPlayer);
         setCategory(finalCategory);
@@ -56,6 +69,7 @@ const SlotMachine = forwardRef(
             spinTime={4000}
             spinning={spinning}
             cursed={cursed}
+            pitch={0.9} // 👈 lower pitch
           />
           <SlotReel
             items={categories}
@@ -64,6 +78,7 @@ const SlotMachine = forwardRef(
             spinTime={6000}
             spinning={spinning}
             cursed={cursed}
+            pitch={1.0} // 👈 normal pitch
           />
           <SlotReel
             items={Object.values(gamesByCategory).flat()}
@@ -72,6 +87,7 @@ const SlotMachine = forwardRef(
             spinTime={8000}
             spinning={spinning}
             cursed={cursed}
+            pitch={1.1} // 👈 slightly higher pitch
           />
         </div>
       </div>
