@@ -7,22 +7,5 @@
   "dependencies": {
     "framer-motion": "^12.23.24",
     "howler": "^2.2.4"
-  },
-  "name": "jack-o-darepot",
-  "version": "1.0.0",
-  "description": "> *“Spin the reels. Face the dare.”*",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/DANDARE21/JACK-O-DAREPOT.git"
-  },
-  "author": "DANDARE",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/DANDARE21/JACK-O-DAREPOT/issues"
-  },
-  "homepage": "https://github.com/DANDARE21/JACK-O-DAREPOT#readme"
+  }
 }
