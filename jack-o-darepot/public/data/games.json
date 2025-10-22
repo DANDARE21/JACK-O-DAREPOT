@@ -1,7 +1,28 @@
 {
-  "VR": ["PROPAGATION HOTEL", "RESIDENT EVIL 7", "FNAF: HELP WANTED"],
-  "FNAF": ["FNAF 1", "FNAF Fangame 2020", "Five Nights at Candy's"],
-  "INDIE": ["Undertale", "Hollow Knight", "Stardew Valley", "GAME1", "GAME2", "GAME3", "GAME4", "GAME5"],
-  "MIGUEJUEGOS": ["MIGUEL", "MIGUELEZ"],
-  "PS1 SPOOKY DEMOS" : ["IDK THEIR NAMES LOL"]
+  "Action": [
+    {
+      "name": "DOOM Eternal",
+      "image": "/assets/images/doom.png",
+      "sound": "/assets/sounds/doom.mp3"
+    },
+    {
+      "name": "Half-Life Alyx",
+      "image": "/assets/images/alyx.png",
+      "sound": "/assets/sounds/alyx.mp3"
+    },
+    {
+      "name": "Hollow Knight",
+      "image": "/assets/images/hollowknight.png",
+      "sound": "/assets/sounds/hollowknight.mp3"
+    }
+  ],
+  "RPG": [
+    {
+      "name": "Skyrim"
+    },
+    {
+      "name": "Dark Souls",
+      "image": ""
+    }
+  ]
 }

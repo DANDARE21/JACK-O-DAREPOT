@@ -26,7 +26,7 @@ const SlotMachine = forwardRef(
 
     // Expose a method for the handler to trigger spin
     useImperativeHandle(ref, () => ({
-      spin() {
+      spin(onComplete) {
         if (!players.length || !categories.length) return;
 
         setSpinning(true);
@@ -35,7 +35,6 @@ const SlotMachine = forwardRef(
         const curseChance = Math.min(curseMeter / 2, 50);
         const isCursed = Math.random() * 100 < curseChance;
         setCursed(isCursed);
-        isCursed ? resetCurse() : increaseCurse();
 
         const finalPlayer = isCursed ? "6" : getRandom(players);
         const finalCategory = isCursed ? "6" : getRandom(categories);
@@ -55,7 +54,17 @@ const SlotMachine = forwardRef(
         setCategory(finalCategory);
         setGame(finalGame);
 
-        setTimeout(() => setSpinning(false), 8100); // matches last reel spinTime
+        // Wait for the longest reel duration before ending spin
+        const longestSpinTime = 8100; // match your last reel
+        setTimeout(() => {
+          setSpinning(false);
+
+          // Only update curse AFTER spinning finishes
+          isCursed ? resetCurse() : increaseCurse();
+
+          // Notify handler spin ended
+          if (onComplete) onComplete();
+        }, longestSpinTime);
       },
     }));
 
@@ -69,7 +78,8 @@ const SlotMachine = forwardRef(
             spinTime={4000}
             spinning={spinning}
             cursed={cursed}
-            pitch={0.9} // 👈 lower pitch
+            pitch={0.9}
+            increaseCurse={increaseCurse}
           />
           <SlotReel
             items={categories}
@@ -78,7 +88,8 @@ const SlotMachine = forwardRef(
             spinTime={6000}
             spinning={spinning}
             cursed={cursed}
-            pitch={1.0} // 👈 normal pitch
+            pitch={1.0}
+            increaseCurse={increaseCurse}
           />
           <SlotReel
             items={Object.values(gamesByCategory).flat()}
@@ -87,7 +98,8 @@ const SlotMachine = forwardRef(
             spinTime={8000}
             spinning={spinning}
             cursed={cursed}
-            pitch={1.1} // 👈 slightly higher pitch
+            pitch={1.1}
+            increaseCurse={increaseCurse}s
           />
         </div>
       </div>

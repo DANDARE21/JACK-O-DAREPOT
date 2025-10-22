@@ -1,6 +1,10 @@
 [
-  "Daniel",
-  "ZERO",
-  "TRIBOOT",
-  "OÑAÑA"
+  {
+    "name": "Daniel",
+    "image": "/assets/images/daniel.png",
+    "sound": "/assets/sounds/daniel.mp3"
+  },
+  {
+    "name": "Alice"
+  }
 ]
