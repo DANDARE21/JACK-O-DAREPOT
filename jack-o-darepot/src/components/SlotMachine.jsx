@@ -1,6 +1,7 @@
 import { useState, forwardRef, useImperativeHandle } from "react";
 import SlotReel from "./SlotReel";
 import { motion } from "framer-motion";
+import { Howl } from "howler"; // ✅ Import Howler
 import "./SlotMachine.css";
 
 const SlotMachine = forwardRef(
@@ -26,9 +27,18 @@ const SlotMachine = forwardRef(
     const allGames = Object.values(gamesByCategory).flat();
     const getRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
+    // ✅ Preload the spin start sound
+    const spinStartSound = new Howl({
+      src: ["/assets/sounds/spin.mp3"], // You can name it whatever fits
+      volume: 0.9,
+    });
+
     useImperativeHandle(ref, () => ({
       spin(onComplete) {
         if (!players.length || !allGames.length) return;
+
+        // ✅ Play the spin start sound
+        spinStartSound.play();
 
         setSpinCount((prev) => prev + 1);
         setCursed(false);
@@ -72,6 +82,7 @@ const SlotMachine = forwardRef(
         setCategory(finalCategory);
         setGame(finalGame);
 
+        // Finish
         setTimeout(() => {
           isCursed ? resetCurse() : increaseCurse();
           console.log("🎯 Spin finished.");
@@ -89,7 +100,7 @@ const SlotMachine = forwardRef(
             spinTime={4000}
             spinning={spinning}
             cursed={cursed}
-            pitch={0.9}
+            pitch={1}
           />
           <SlotReel
             items={categories}
@@ -97,7 +108,7 @@ const SlotMachine = forwardRef(
             spinTime={6000}
             spinning={spinning}
             cursed={cursed}
-            pitch={1.0}
+            pitch={1.1}
           />
           <SlotReel
             items={allGames}
@@ -105,7 +116,7 @@ const SlotMachine = forwardRef(
             spinTime={8000}
             spinning={spinning}
             cursed={cursed}
-            pitch={1.1}
+            pitch={1.25}
           />
         </div>
 

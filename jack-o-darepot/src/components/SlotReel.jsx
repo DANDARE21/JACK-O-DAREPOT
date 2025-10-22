@@ -8,6 +8,7 @@ export default function SlotReel({
   spinTime = 2000,
   cursed,
   spinning: parentSpinning,
+  pitch = 1.0, // ✅ add pitch prop
 }) {
   const [displayValue, setDisplayValue] = useState(finalValue || "?");
   const [spinning, setSpinning] = useState(false);
@@ -21,7 +22,7 @@ export default function SlotReel({
   };
 
   useEffect(() => {
-    // Preload all valid images
+    // ✅ Preload all valid images
     items.forEach((item) => {
       if (item?.image) {
         const img = new Image();
@@ -29,23 +30,21 @@ export default function SlotReel({
       }
     });
 
-    // Load reel stop sound
+    // ✅ Load reel stop sound
     stopSound.current = new Howl({
       src: ["/assets/sounds/reel-stop.mp3"],
-      volume: 0.5,
+      volume: 1,
+      rate: pitch, // <-- use pitch here
     });
-  }, [items]);
+  }, [items, pitch]);
 
   useEffect(() => {
     if (!parentSpinning) return;
 
     setSpinning(true);
 
-    // Prepare "6" as a special item (image optional)
     const sixItem = { name: "6", image: "/assets/images/six.png" };
-
-    // Only include "6" in spinning if not finalValue (unless cursed)
-    const spinningItems = cursed ? [...items, sixItem] : [...items, sixItem];
+    const spinningItems = cursed ? [...items, sixItem] : [...items];
 
     const interval = setInterval(() => {
       const randomItem =
@@ -56,48 +55,47 @@ export default function SlotReel({
     const timeout = setTimeout(() => {
       clearInterval(interval);
 
-      // Determine final result
       let finalResult = finalValue;
-
-      // If cursed, allow "6" as final
       if (cursed && finalValue === "6") {
-        finalResult = { name: "6", image: "/assets/images/six.png", sound: "/assets/sounds/six-final.mp3" };
+        finalResult = {
+          name: "6",
+          image: "/assets/images/six.png",
+          sound: "/assets/sounds/six-final.mp3",
+        };
       }
 
       setDisplayValue(finalResult);
       setSpinning(false);
 
-      // Stop sound
+      // ✅ Play stop sound with individual pitch
+      stopSound.current?.rate(pitch);
       stopSound.current?.play();
 
-      // Play finalValue sound only if it exists (e.g., cursed 6)
+      // ✅ Play final sound (like the cursed 6)
       if (finalResult?.sound) {
         const finalSound = new Howl({
           src: [fixAssetPath(finalResult.sound)],
-          volume: 0.8,
+          volume: 1,
         });
         finalSound.play();
       }
-
     }, spinTime);
 
     return () => {
       clearInterval(interval);
       clearTimeout(timeout);
     };
-  }, [parentSpinning, finalValue, items, spinTime, cursed]);
+  }, [parentSpinning, finalValue, items, spinTime, cursed, pitch]);
 
-  // Cursed shake effect
+  // Animations
   const shake = !spinning && cursed
     ? { x: [-5, 5, -5, 5, 0], transition: { duration: 0.4 } }
     : { x: 0 };
 
-  // Spin motion while spinning
   const spinMotion = spinning
     ? { y: [0, -5, 5, 0], transition: { repeat: Infinity, duration: 0.1, ease: "linear" } }
     : { y: 0 };
 
-  // Bounce only after reel stops
   const bounce = !spinning
     ? { y: [-10, 0], transition: { type: "spring", stiffness: 500, damping: 10 } }
     : {};
