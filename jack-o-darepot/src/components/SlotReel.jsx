@@ -13,8 +13,15 @@ export default function SlotReel({
   const [spinning, setSpinning] = useState(false);
   const stopSound = useRef(null);
 
+  const fixAssetPath = (path) => {
+    if (!path) return "";
+    if (path.startsWith("http")) return path;
+    if (path.startsWith("/")) return path;
+    return `/assets/${path}`;
+  };
+
   useEffect(() => {
-    // ✅ Preload all valid images
+    // Preload all valid images
     items.forEach((item) => {
       if (item?.image) {
         const img = new Image();
@@ -22,7 +29,7 @@ export default function SlotReel({
       }
     });
 
-    // ✅ Load reel stop sound
+    // Load reel stop sound
     stopSound.current = new Howl({
       src: ["/assets/sounds/reel-stop.mp3"],
       volume: 0.5,
@@ -34,58 +41,68 @@ export default function SlotReel({
 
     setSpinning(true);
 
+    // Prepare "6" as a special item (image optional)
+    const sixItem = { name: "6", image: "/assets/images/six.png" };
+
+    // Only include "6" in spinning if not finalValue (unless cursed)
+    const spinningItems = cursed ? [...items, sixItem] : [...items, sixItem];
+
     const interval = setInterval(() => {
-      const randomItem = items[Math.floor(Math.random() * items.length)];
+      const randomItem =
+        spinningItems[Math.floor(Math.random() * spinningItems.length)];
       setDisplayValue(randomItem);
     }, 80);
 
     const timeout = setTimeout(() => {
       clearInterval(interval);
-      setDisplayValue(finalValue);
+
+      // Determine final result
+      let finalResult = finalValue;
+
+      // If cursed, allow "6" as final
+      if (cursed && finalValue === "6") {
+        finalResult = { name: "6", image: "/assets/images/six.png", sound: "/assets/sounds/six-final.mp3" };
+      }
+
+      setDisplayValue(finalResult);
       setSpinning(false);
 
-      console.log("🎵 Reel stopped at:", finalValue.name || finalValue);
-
+      // Stop sound
       stopSound.current?.play();
 
-      if (finalValue?.sound) {
-        const itemSound = new Howl({
-          src: [fixAssetPath(finalValue.sound)],
+      // Play finalValue sound only if it exists (e.g., cursed 6)
+      if (finalResult?.sound) {
+        const finalSound = new Howl({
+          src: [fixAssetPath(finalResult.sound)],
           volume: 0.8,
         });
-        itemSound.play();
+        finalSound.play();
       }
+
     }, spinTime);
 
     return () => {
       clearInterval(interval);
       clearTimeout(timeout);
     };
-  }, [parentSpinning, finalValue, items, spinTime]);
+  }, [parentSpinning, finalValue, items, spinTime, cursed]);
 
-  const fixAssetPath = (path) => {
-    if (!path) return "";
-    if (path.startsWith("http")) return path;
-    if (path.startsWith("/")) return path;
-    return `/assets/${path}`;
-  };
-
+  // Cursed shake effect
   const shake = !spinning && cursed
     ? { x: [-5, 5, -5, 5, 0], transition: { duration: 0.4 } }
     : { x: 0 };
 
+  // Spin motion while spinning
   const spinMotion = spinning
     ? { y: [0, -5, 5, 0], transition: { repeat: Infinity, duration: 0.1, ease: "linear" } }
     : { y: 0 };
 
+  // Bounce only after reel stops
   const bounce = !spinning
     ? { y: [-10, 0], transition: { type: "spring", stiffness: 500, damping: 10 } }
     : {};
 
   const isImage = displayValue && displayValue.image;
-
-  // ✅ Motion blur only on the inner content
-  //const blurAmount = spinning ? 0.1 : 0;
 
   return (
     <motion.div
@@ -109,7 +126,6 @@ export default function SlotReel({
           color: "white",
           minWidth: "150px",
           textAlign: "center",
-          //filter: `blur(${blurAmount}px)`,
           transition: "filter 0.2s ease",
           willChange: "transform, filter",
         }}
@@ -122,7 +138,6 @@ export default function SlotReel({
               maxHeight: "100px",
               maxWidth: "160px",
               objectFit: "contain",
-              //filter: `blur(${blurAmount}px)`,
               transition: "filter 0.2s ease",
             }}
           />

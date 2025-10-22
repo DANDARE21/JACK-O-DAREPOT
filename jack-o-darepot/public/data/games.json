@@ -6,23 +6,116 @@
       "sound": "/assets/sounds/doom.mp3"
     },
     {
-      "name": "Half-Life Alyx",
-      "image": "/assets/images/alyx.png",
-      "sound": "/assets/sounds/alyx.mp3"
+      "name": "Resident Evil 4 Remake",
+      "image": "/assets/images/re4.png",
+      "sound": "/assets/sounds/re4.mp3"
     },
     {
-      "name": "Hollow Knight",
-      "image": "/assets/images/hollowknight.png",
-      "sound": "/assets/sounds/hollowknight.mp3"
+      "name": "Dead by Daylight",
+      "image": "/assets/images/dbd.png",
+      "sound": "/assets/sounds/dbd.mp3"
     }
   ],
   "RPG": [
     {
-      "name": "Skyrim"
+      "name": "Dark Souls",
+      "image": "/assets/images/darksouls.png",
+      "sound": "/assets/sounds/darksouls.mp3"
     },
     {
-      "name": "Dark Souls",
-      "image": ""
+      "name": "Bloodborne",
+      "image": "/assets/images/bloodborne.png",
+      "sound": "/assets/sounds/bloodborne.mp3"
+    },
+    {
+      "name": "Skyrim",
+      "image": "/assets/images/skyrim.png",
+      "sound": "/assets/sounds/skyrim.mp3"
+    }
+  ],
+  "Horror": [
+    {
+      "name": "Amnesia: The Dark Descent",
+      "image": "/assets/images/amnesia.png",
+      "sound": "/assets/sounds/amnesia.mp3"
+    },
+    {
+      "name": "Phasmophobia",
+      "image": "/assets/images/phasmophobia.png",
+      "sound": "/assets/sounds/phasmophobia.mp3"
+    },
+    {
+      "name": "Outlast",
+      "image": "/assets/images/outlast.png",
+      "sound": "/assets/sounds/outlast.mp3"
+    }
+  ],
+  "Puzzle": [
+    {
+      "name": "Little Nightmares",
+      "image": "/assets/images/littlenightmares.png",
+      "sound": "/assets/sounds/littlenightmares.mp3"
+    },
+    {
+      "name": "The Room",
+      "image": "/assets/images/theroom.png",
+      "sound": "/assets/sounds/theroom.mp3"
+    },
+    {
+      "name": "The House Abandon",
+      "image": "/assets/images/houseabandon.png",
+      "sound": "/assets/sounds/houseabandon.mp3"
+    }
+  ],
+  "VR": [
+    {
+      "name": "FNAF Help Wanted",
+      "image": "/assets/images/fnaf_vr.png",
+      "sound": "/assets/sounds/fnaf_vr.mp3"
+    },
+    {
+      "name": "Phantom: Covert Ops VR",
+      "image": "/assets/images/phantomvr.png",
+      "sound": "/assets/sounds/phantomvr.mp3"
+    },
+    {
+      "name": "Resident Evil 7 VR",
+      "image": "/assets/images/re7vr.png",
+      "sound": "/assets/sounds/re7vr.mp3"
+    }
+  ],
+  "Arcade": [
+    {
+      "name": "Left 4 Dead 2",
+      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTW7LY4TGWhJSBKM37_YV7P3LbvFQxWLh5whg&s",
+      "sound": "/assets/sounds/l4d2.mp3"
+    },
+    {
+      "name": "Cuphead",
+      "image": "/assets/images/cuphead.png",
+      "sound": "/assets/sounds/cuphead.mp3"
+    },
+    {
+      "name": "Ghosts 'n Goblins",
+      "image": "/assets/images/ghostsngoblins.png",
+      "sound": "/assets/sounds/ghostsngoblins.mp3"
+    }
+  ],
+  "Adventure": [
+    {
+      "name": "Alan Wake",
+      "image": "/assets/images/alanwake.png",
+      "sound": "/assets/sounds/alanwake.mp3"
+    },
+    {
+      "name": "Silent Hill 2",
+      "image": "/assets/images/silenthill2.png",
+      "sound": "/assets/sounds/silenthill2.mp3"
+    },
+    {
+      "name": "Layers of Fear",
+      "image": "/assets/images/layersoffear.png",
+      "sound": "/assets/sounds/layersoffear.mp3"
     }
   ]
 }

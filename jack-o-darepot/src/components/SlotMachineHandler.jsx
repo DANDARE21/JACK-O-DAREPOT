@@ -1,12 +1,14 @@
 import { useState, useRef } from "react";
 import SlotMachine from "./SlotMachine";
 import { motion } from "framer-motion";
+import CursedText from "./CursedText"; // <-- import
 import "./SlotMachineHandler.css";
 
 export default function SlotMachineHandler({ players, gamesByCategory }) {
   const [curseMeter, setCurseMeter] = useState(0);
   const [spinCount, setSpinCount] = useState(0);
   const [spinning, setSpinning] = useState(false);
+  const [cursedTrigger, setCursedTrigger] = useState(false); // new
 
   const slotRef = useRef();
 
@@ -18,30 +20,21 @@ export default function SlotMachineHandler({ players, gamesByCategory }) {
     setSpinning(true);
     setSpinCount((prev) => prev + 1);
 
-    if (slotRef.current) slotRef.current.spin();
-
-    // Stop shaking after longest reel duration (matches SlotMachine)
-    setTimeout(() => setSpinning(false), 8100);
+    if (slotRef.current) {
+      slotRef.current.spin((isCursed) => {
+        // Trigger CURSED! text when spin ends and is cursed
+        if (isCursed) {
+          setCursedTrigger(true);
+        }
+        setSpinning(false); // stop shaking after spin
+      });
+    }
   };
 
   return (
-    <div className="handler-container">
-    
-      {/* Curse bar */}
-      <motion.div
-        className="curse-bar"
-        animate={
-          curseMeter > 0
-            ? { boxShadow: ["0 0 10px red", "0 0 25px red", "0 0 10px red"] }
-            : { boxShadow: "none" }
-        }
-        transition={{ duration: 0.6, repeat: curseMeter > 0 ? Infinity : 0 }}
-      >
-        <div
-          className="curse-fill"
-          style={{ width: `${curseMeter}%` }}
-        ></div>
-      </motion.div>
+    <div className="handler-container" style={{ position: "relative" }}>
+      {/* CURSED! overlay */}
+      <CursedText trigger={cursedTrigger} />
 
       {/* Slot machine container with background and shake */}
       <motion.div
@@ -58,6 +51,7 @@ export default function SlotMachineHandler({ players, gamesByCategory }) {
           resetCurse={resetCurse}
           spinCount={spinCount}
           setSpinCount={setSpinCount}
+          spinning={spinning}
         />
       </motion.div>
 

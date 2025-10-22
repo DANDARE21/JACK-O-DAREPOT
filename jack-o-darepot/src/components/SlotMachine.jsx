@@ -1,5 +1,6 @@
 import { useState, forwardRef, useImperativeHandle } from "react";
 import SlotReel from "./SlotReel";
+import { motion } from "framer-motion";
 import "./SlotMachine.css";
 
 const SlotMachine = forwardRef(
@@ -12,96 +13,117 @@ const SlotMachine = forwardRef(
       resetCurse,
       spinCount,
       setSpinCount,
+      spinning,
     },
     ref
   ) => {
-    const [player, setPlayer] = useState("???");
-    const [category, setCategory] = useState("???");
-    const [game, setGame] = useState("???");
-    const [spinning, setSpinning] = useState(false);
+    const [player, setPlayer] = useState("?");
+    const [category, setCategory] = useState("?");
+    const [game, setGame] = useState("?");
     const [cursed, setCursed] = useState(false);
 
     const categories = Object.keys(gamesByCategory);
+    const allGames = Object.values(gamesByCategory).flat();
     const getRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
-    // Expose a method for the handler to trigger spin
     useImperativeHandle(ref, () => ({
       spin(onComplete) {
-        if (!players.length || !categories.length) return;
+        if (!players.length || !allGames.length) return;
 
-        setSpinning(true);
-        setSpinCount(spinCount + 1);
+        setSpinCount((prev) => prev + 1);
+        setCursed(false);
 
         const curseChance = Math.min(curseMeter / 2, 50);
         const isCursed = Math.random() * 100 < curseChance;
         setCursed(isCursed);
 
         const finalPlayer = isCursed ? "6" : getRandom(players);
-        const finalCategory = isCursed ? "6" : getRandom(categories);
-        const finalGame =
-          isCursed || !gamesByCategory[finalCategory]
-            ? "6"
-            : getRandom(gamesByCategory[finalCategory]);
 
+        let finalGame, finalCategory;
+
+        if (isCursed) {
+          // cursed, everything becomes "6"
+          finalGame = "6";
+          finalCategory = "6";
+        } else {
+          // pick a random game from all games
+          finalGame = getRandom(allGames);
+
+          // find its category
+          finalCategory = Object.keys(gamesByCategory).find((cat) =>
+            gamesByCategory[cat].includes(finalGame)
+          );
+        }
+
+        // 🔧 Dev messages
         console.log(
-          "Final selection ->",
+          "🎰 Spin triggered ->",
+          "Player:",
           finalPlayer,
+          "Category:",
           finalCategory,
-          finalGame
+          "Game:",
+          finalGame,
+          "Cursed:",
+          isCursed
         );
 
         setPlayer(finalPlayer);
         setCategory(finalCategory);
         setGame(finalGame);
 
-        // Wait for the longest reel duration before ending spin
-        const longestSpinTime = 8100; // match your last reel
         setTimeout(() => {
-          setSpinning(false);
-
-          // Only update curse AFTER spinning finishes
           isCursed ? resetCurse() : increaseCurse();
-
-          // Notify handler spin ended
-          if (onComplete) onComplete();
-        }, longestSpinTime);
+          console.log("🎯 Spin finished.");
+          if (onComplete) onComplete(isCursed);
+        }, 8100);
       },
     }));
 
     return (
-      <div className="slot-machine-container">
+      <div className="slot-machine-container" style={{ position: "relative" }}>
         <div className="slots-wrapper">
           <SlotReel
             items={players}
             finalValue={player}
-            curseMeter={curseMeter}
             spinTime={4000}
             spinning={spinning}
             cursed={cursed}
             pitch={0.9}
-            increaseCurse={increaseCurse}
           />
           <SlotReel
             items={categories}
             finalValue={category}
-            curseMeter={curseMeter}
             spinTime={6000}
             spinning={spinning}
             cursed={cursed}
             pitch={1.0}
-            increaseCurse={increaseCurse}
           />
           <SlotReel
-            items={Object.values(gamesByCategory).flat()}
+            items={allGames}
             finalValue={game}
-            curseMeter={curseMeter}
             spinTime={8000}
             spinning={spinning}
             cursed={cursed}
             pitch={1.1}
-            increaseCurse={increaseCurse}s
           />
         </div>
+
+        {/* Curse Bar below the reels */}
+        <motion.div
+          className="curse-bar"
+          style={{ marginTop: "12px", width: "100%" }}
+          animate={
+            curseMeter > 0
+              ? {
+                  boxShadow: ["0 0 10px red", "0 0 25px red", "0 0 10px red"],
+                }
+              : { boxShadow: "none" }
+          }
+          transition={{ duration: 0.6, repeat: curseMeter > 0 ? Infinity : 0 }}
+        >
+          <div className="curse-fill" style={{ width: `${curseMeter}%` }}></div>
+        </motion.div>
       </div>
     );
   }
