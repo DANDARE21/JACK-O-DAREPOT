@@ -8,7 +8,7 @@ export default function SlotReel({
   spinTime = 2000,
   cursed,
   spinning: parentSpinning,
-  pitch = 1.0, // ✅ add pitch prop
+  pitch = 1.0,
 }) {
   const [displayValue, setDisplayValue] = useState(finalValue || "?");
   const [spinning, setSpinning] = useState(false);
@@ -21,30 +21,45 @@ export default function SlotReel({
     return `/assets/${path}`;
   };
 
+  // Normalize an item so we always have an object with at least { name, image?, sound? }
+  const normalize = (it) => {
+    if (!it && it !== 0) return null;
+    if (typeof it === "string" || typeof it === "number") {
+      return { name: String(it) };
+    }
+    // assume object already
+    return it;
+  };
+
   useEffect(() => {
-    // ✅ Preload all valid images
+    // Preload images for items
     items.forEach((item) => {
-      if (item?.image) {
+      const n = normalize(item);
+      if (n?.image) {
         const img = new Image();
-        img.src = fixAssetPath(item.image);
+        img.src = fixAssetPath(n.image);
       }
     });
 
-    // ✅ Load reel stop sound
+    // Prepare stop sound (one Howl per reel so we can tweak rate)
     stopSound.current = new Howl({
       src: ["/assets/sounds/reel-stop.mp3"],
       volume: 1,
-      rate: pitch, // <-- use pitch here
+      // don't set rate here permanently; we'll call rate() before play
     });
-  }, [items, pitch]);
+  }, [items]);
 
   useEffect(() => {
     if (!parentSpinning) return;
 
     setSpinning(true);
 
+    // Always include the "6" item in the spinning pool (so "6" can appear during spin)
     const sixItem = { name: "6", image: "/assets/images/six.png" };
-    const spinningItems = cursed ? [...items, sixItem] : [...items];
+
+    // Build normalized items array and always add sixItem
+    const normalized = items.map(normalize).filter(Boolean);
+    const spinningItems = [...normalized, sixItem];
 
     const interval = setInterval(() => {
       const randomItem =
@@ -55,8 +70,11 @@ export default function SlotReel({
     const timeout = setTimeout(() => {
       clearInterval(interval);
 
-      let finalResult = finalValue;
-      if (cursed && finalValue === "6") {
+      // Determine final result (finalValue might be a primitive or an object)
+      let finalResult = normalize(finalValue) || finalValue;
+
+      // If the finalResult is the primitive "6" or name === "6" and cursed, attach image/sound
+      if ((finalResult === "6" || finalResult?.name === "6") && cursed) {
         finalResult = {
           name: "6",
           image: "/assets/images/six.png",
@@ -64,14 +82,23 @@ export default function SlotReel({
         };
       }
 
+      // If finalResult is still a primitive (string/number), normalize to object for rendering
+      if (typeof finalResult === "string" || typeof finalResult === "number") {
+        finalResult = { name: String(finalResult) };
+      }
+
       setDisplayValue(finalResult);
       setSpinning(false);
 
-      // ✅ Play stop sound with individual pitch
-      stopSound.current?.rate(pitch);
+      // Play stop sound with the reel's pitch
+      try {
+        stopSound.current?.rate && stopSound.current.rate(pitch);
+      } catch (e) {
+        // some Howler builds may not support rate in all environments; swallow
+      }
       stopSound.current?.play();
 
-      // ✅ Play final sound (like the cursed 6)
+      // Play any item-specific sound (e.g., cursed six final)
       if (finalResult?.sound) {
         const finalSound = new Howl({
           src: [fixAssetPath(finalResult.sound)],
@@ -131,7 +158,7 @@ export default function SlotReel({
         {isImage ? (
           <img
             src={fixAssetPath(displayValue.image)}
-            alt={displayValue.name || "Image"}
+            alt={displayValue.name || displayValue}
             style={{
               maxHeight: "100px",
               maxWidth: "160px",
@@ -140,7 +167,7 @@ export default function SlotReel({
             }}
           />
         ) : (
-          displayValue.name || displayValue
+          displayValue?.name ?? displayValue
         )}
       </motion.div>
     </motion.div>
