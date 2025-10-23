@@ -1,16 +1,33 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import SlotMachine from "./SlotMachine";
 import { motion } from "framer-motion";
-import CursedText from "./CursedText"; // <-- import
+import CursedText from "./CursedText";
 import "./SlotMachineHandler.css";
 
 export default function SlotMachineHandler({ players, gamesByCategory }) {
-  const [curseMeter, setCurseMeter] = useState(0);
-  const [spinCount, setSpinCount] = useState(0);
+  // ✅ Load persisted values once
+  const [curseMeter, setCurseMeter] = useState(() => {
+    const stored = localStorage.getItem("curseMeter");
+    return stored ? parseInt(stored, 10) : 0;
+  });
+  const [spinCount, setSpinCount] = useState(() => {
+    const stored = localStorage.getItem("spinCount");
+    return stored ? parseInt(stored, 10) : 0;
+  });
+
   const [spinning, setSpinning] = useState(false);
-  const [cursedTrigger, setCursedTrigger] = useState(false); // new
+  const [cursedTrigger, setCursedTrigger] = useState(false);
 
   const slotRef = useRef();
+
+  // ✅ Persist changes to localStorage
+  useEffect(() => {
+    localStorage.setItem("curseMeter", curseMeter);
+  }, [curseMeter]);
+
+  useEffect(() => {
+    localStorage.setItem("spinCount", spinCount);
+  }, [spinCount]);
 
   const increaseCurse = () => setCurseMeter((prev) => Math.min(prev + 10, 100));
   const resetCurse = () => setCurseMeter(0);
@@ -18,15 +35,21 @@ export default function SlotMachineHandler({ players, gamesByCategory }) {
   const startSpin = () => {
     if (!players.length) return;
     setSpinning(true);
-    setSpinCount((prev) => prev + 1);
 
     if (slotRef.current) {
       slotRef.current.spin((isCursed) => {
-        // Trigger CURSED! text when spin ends and is cursed
+        // ✅ Only trigger CURSED! if spin was cursed
         if (isCursed) {
           setCursedTrigger(true);
+          resetCurse(); // cursed = reset meter
+        } else {
+          increaseCurse(); // not cursed = increase meter
         }
-        setSpinning(false); // stop shaking after spin
+
+        // ✅ Always increment spin counter
+        setSpinCount((prev) => prev + 1);
+
+        setSpinning(false);
       });
     }
   };
