@@ -53,3 +53,25 @@
   text-align: center;
   font-size: 1.2rem;
 }
+.slot-textbox {
+  position: absolute;
+  top: -80px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 400px;
+  height: 60px;
+  background: radial-gradient(circle, #ff6600 0%, #660000 80%);
+  border: 3px solid #ffcc00;
+  border-radius: 12px;
+  color: white;
+  font-family: "Press Start 2P", sans-serif;
+  font-size: 12px;
+  text-align: center;
+  line-height: 60px;
+  text-shadow: 0 0 10px #ff8800, 0 0 20px #ff0000;
+  box-shadow: 0 0 20px #ff4400 inset, 0 0 25px #ff6600;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+

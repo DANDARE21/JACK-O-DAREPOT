@@ -3,7 +3,8 @@
     {
       "name": "DOOM Eternal",
       "image": "/assets/images/doom.png",
-      "sound": "/assets/sounds/doom.mp3"
+      "sound": "/assets/sounds/doom.mp3",
+      "text": "There’s no escape — the Entity is always watching."
     },
     {
       "name": "Resident Evil 4 Remake",
@@ -37,24 +38,28 @@
     {
       "name": "Amnesia: The Dark Descent",
       "image": "/assets/images/amnesia.png",
-      "sound": "/assets/sounds/amnesia.mp3"
+      "sound": "/assets/sounds/amnesia.mp3",
+      "text": "There’s no escape — the Entity is always watching."
     },
     {
       "name": "Phasmophobia",
       "image": "/assets/images/phasmophobia.png",
-      "sound": "/assets/sounds/phasmophobia.mp3"
+      "sound": "/assets/sounds/phasmophobia.mp3",
+      "text": "There’s no escape — the Entity is always watching."
     },
     {
       "name": "Outlast",
       "image": "/assets/images/outlast.png",
-      "sound": "/assets/sounds/outlast.mp3"
+      "sound": "/assets/sounds/outlast.mp3",
+      "text": "There’s no escape — the Entity is always watching."
     }
   ],
   "Puzzle": [
     {
       "name": "Little Nightmares",
       "image": "/assets/images/littlenightmares.png",
-      "sound": "/assets/sounds/littlenightmares.mp3"
+      "sound": "/assets/sounds/littlenightmares.mp3",
+      "text": "There’s no escape — the Entity is always watching."
     },
     {
       "name": "The Room",

@@ -1,4 +1,4 @@
-import { useState, forwardRef, useImperativeHandle } from "react";
+import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
 import SlotReel from "./SlotReel";
 import { motion } from "framer-motion";
 import { Howl } from "howler";
@@ -21,68 +21,74 @@ const SlotMachine = forwardRef(
     const [category, setCategory] = useState("?");
     const [game, setGame] = useState("?");
     const [cursed, setCursed] = useState(false);
+    const [displayText, setDisplayText] = useState("");
+    const [messages, setMessages] = useState([]);
 
     const categories = Object.keys(gamesByCategory);
     const allGames = Object.values(gamesByCategory).flat();
     const getRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
-    // Preload spin sound
+    // Load random spin messages
+    useEffect(() => {
+      fetch("/data/messages.json")
+        .then((res) => res.json())
+        .then((data) => setMessages(data.messages))
+        .catch(console.error);
+    }, []);
+
+    // Spin start sound
     const spinStartSound = new Howl({
       src: ["/assets/sounds/spin.mp3"],
       volume: 0.9,
     });
 
-    // Persist spinCount in localStorage
     useImperativeHandle(ref, () => ({
       spin(onComplete) {
         if (!players.length || !allGames.length) return;
 
         spinStartSound.play();
+        setDisplayText(getRandom(messages)); // 🎰 show random message
+        setCursed(false);
+
         setSpinCount((prev) => {
           const next = prev + 1;
           localStorage.setItem("spinCount", next);
           return next;
         });
-        setCursed(false);
 
         const curseChance = Math.min(curseMeter / 2, 50);
         const isCursed = Math.random() * 100 < curseChance;
         setCursed(isCursed);
 
         const finalPlayer = isCursed ? "6" : getRandom(players);
-        let finalGame, finalCategory;
+        let finalGameObj, finalCategory;
 
         if (isCursed) {
-          finalGame = "6";
+          finalGameObj = null;
           finalCategory = "6";
         } else {
-          finalGame = getRandom(allGames);
+          finalGameObj = getRandom(allGames);
           finalCategory = Object.keys(gamesByCategory).find((cat) =>
-            gamesByCategory[cat].includes(finalGame)
+            gamesByCategory[cat].some((g) => g.name === finalGameObj.name)
           );
         }
 
-        console.log(
-          "🎰 Spin triggered ->",
-          "Player:",
-          finalPlayer,
-          "Category:",
-          finalCategory,
-          "Game:",
-          finalGame,
-          "Cursed:",
-          isCursed
-        );
-
         setPlayer(finalPlayer);
         setCategory(finalCategory);
-        setGame(finalGame);
+        setGame(finalGameObj?.name || "6");
 
-        // Finish
+        // 🕒 Wait for reels to finish
         setTimeout(() => {
-          isCursed ? resetCurse() : increaseCurse();
-          localStorage.setItem("curseMeter", curseMeter); // save the updated curseMeter
-          console.log("🎯 Spin finished.");
+          if (isCursed) {
+            resetCurse();
+            setDisplayText("CURSED");
+          } else {
+            increaseCurse();
+            localStorage.setItem("curseMeter", curseMeter);
+            if (finalGameObj?.text) {
+              setDisplayText(finalGameObj.text); // 🪄 update only if text exists
+            }
+          }
           if (onComplete) onComplete(isCursed);
         }, 8100);
       },
@@ -90,10 +96,17 @@ const SlotMachine = forwardRef(
 
     return (
       <div className="slot-machine-background">
-        <div
-          className="slot-machine-container"
-          style={{ position: "relative" }}
-        >
+        <div className="slot-machine-container" style={{ position: "relative" }}>
+          {/* Arcade-style glowing text box */}
+          <motion.div
+            className="slot-textbox"
+            initial={{ opacity: 0.9 }}
+            animate={{ opacity: [0.9, 1, 0.9] }}
+            transition={{ duration: 2, repeat: Infinity }}
+          >
+            {displayText || "Insert coin to play..."}
+          </motion.div>
+
           <div className="slots-wrapper">
             <SlotReel
               items={players}
@@ -112,7 +125,7 @@ const SlotMachine = forwardRef(
               pitch={1.1}
             />
             <SlotReel
-              items={allGames}
+              items={allGames.map((g) => (g.name ? g.name : g))}
               finalValue={game}
               spinTime={8000}
               spinning={spinning}
@@ -127,9 +140,7 @@ const SlotMachine = forwardRef(
             style={{ marginTop: "12px", width: "100%" }}
             animate={
               curseMeter > 0
-                ? {
-                    boxShadow: ["0 0 10px red", "0 0 25px red", "0 0 10px red"],
-                  }
+                ? { boxShadow: ["0 0 10px red", "0 0 25px red", "0 0 10px red"] }
                 : { boxShadow: "none" }
             }
             transition={{
