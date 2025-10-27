@@ -58,7 +58,7 @@
   top: -80px;
   left: 50%;
   transform: translateX(-50%);
-  width: 400px;
+  width: 100%;
   height: 60px;
   background: radial-gradient(circle, #ff6600 0%, #660000 80%);
   border: 3px solid #ffcc00;

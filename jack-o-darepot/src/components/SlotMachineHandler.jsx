@@ -78,6 +78,12 @@ export default function SlotMachineHandler({ players, gamesByCategory }) {
         />
       </motion.div>
 
+      {/* Spin count and curse meter display */}
+      <div className="status-bar">
+        <div className="spin-counter">🌀 Spins: {spinCount}</div>
+        <div className="curse-meter">💀 Curse Meter: {curseMeter}%</div>
+      </div>
+
       {/* Spin button */}
       <motion.button
         className="spin-button"
