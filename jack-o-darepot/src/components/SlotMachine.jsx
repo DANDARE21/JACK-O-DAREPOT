@@ -109,7 +109,17 @@ const SlotMachine = forwardRef(
               setDisplayText(finalGameObj.text);
             }
           }
-          if (onComplete) onComplete(isCursed);
+          if (onComplete) {
+            const result = {
+              player: finalPlayer,
+              category: finalCategory,
+              game: finalGameObj,
+            };
+          
+            console.log("[SlotMachine] Finished spin with:", result);
+            onComplete(isCursed, result);
+          }
+          
         }, 8100);
       },
     }));

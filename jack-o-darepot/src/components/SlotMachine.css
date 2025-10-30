@@ -1,6 +1,9 @@
 
 
-
+.slot-machine-container{
+  background: linear-gradient(145deg, #111 0%, #333 100%);
+  box-shadow: 0 0 30px rgba(255, 0, 0, 0.6);
+}
 
 .slots-wrapper {
   display: flex;
