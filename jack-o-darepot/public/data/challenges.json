@@ -1,0 +1,20 @@
+{
+  "challenges": [
+    {
+      "name": "One Life Left",
+      "text": "You must complete your next game without dying once."
+    },
+    {
+      "name": "The Silent Run",
+      "text": "Play your next game without speaking for the entire duration."
+    },
+    {
+      "name": "Blind Faith",
+      "text": "Let another player choose your next game settings."
+    },
+    {
+      "name": "Controller of Fate",
+      "text": "You must play using inverted controls for 10 minutes."
+    }
+  ]
+}

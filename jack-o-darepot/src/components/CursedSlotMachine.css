@@ -1,0 +1,24 @@
+.cursed-slot-background {
+  background: radial-gradient(circle, #1a0000 0%, #000 80%);
+  border: 3px solid red;
+  box-shadow: 0 0 40px red;
+  padding: 20px;
+  border-radius: 20px;
+}
+
+.slot-machine-container.cursed {
+  filter: hue-rotate(-20deg) brightness(0.7) contrast(1.2);
+  animation: cursed-shake 0.2s infinite alternate;
+}
+
+@keyframes cursed-shake {
+  from { transform: translateX(-3px) rotate(-1deg); }
+  to { transform: translateX(3px) rotate(1deg); }
+}
+
+.slot-textbox.cursed-text {
+  color: #ff5555;
+  text-shadow: 0 0 15px red;
+  font-family: "Creepster", cursive;
+  letter-spacing: 2px;
+}

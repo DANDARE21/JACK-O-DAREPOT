@@ -29,6 +29,8 @@ const SlotMachine = forwardRef(
     const allGames = Object.values(gamesByCategory).flat();
     const getRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
+    
+
     // ✅ Preload all game images once
     useEffect(() => {
       const imgs = [];
